@@ -251,14 +251,39 @@ body.sensing #page-wrap{animation:shake .09s linear infinite}
 body.loading{overflow:hidden}
 #loader{
   position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;
-  ... (all your loader CSS) ...
+  align-items:center;justify-content:center;gap:1rem;
+  background:radial-gradient(ellipse at center,var(--ink-2) 0%,var(--ink) 100%);
+  color:#fff;text-align:center;padding:2rem;
 }
+.loader-corner{position:absolute;width:60px;height:60px;color:var(--red);opacity:.5}
+.loader-corner.lc-tl{top:1.2rem;left:1.2rem}
+.loader-corner.lc-br{bottom:1.2rem;right:1.2rem;transform:rotate(180deg)}
+.loader-hang{position:absolute;top:0;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;animation:hang-sway 2.4s ease-in-out infinite;
+  transform-origin:top center}
+.hang-thread{width:1.5px;height:60px;background:rgba(255,255,255,.5)}
+.hang-spider{width:34px;height:36px}
+@keyframes hang-sway{0%,100%{transform:translateX(-50%) rotate(-4deg)}50%{transform:translateX(-50%) rotate(4deg)}}
+.loader-core{position:relative;width:170px;height:170px;display:flex;align-items:center;justify-content:center}
+#loader-web{width:100%;height:100%;position:absolute;inset:0;color:var(--red)}
+#loader-web line,#loader-web path{stroke:currentColor;stroke-width:1.6;fill:none}
+.loader-reticle{position:absolute;width:100%;height:100%;border:2px dashed rgba(255,255,255,.25);
+  border-radius:50%;animation:spin 6s linear infinite}
+.loader-pct{position:relative;font-size:2.1rem;color:#fff}
+.loader-bar{width:220px;height:6px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden}
+.loader-bar i{display:block;height:100%;width:0%;background:var(--red);border-radius:99px;transition:width .1s linear}
+.loader-status{font-size:.85rem;letter-spacing:.08em;opacity:.9}
+.loader-tip{font-size:.68rem;letter-spacing:.15em;opacity:.5;text-transform:uppercase}
+.loader-thwip{display:none;position:absolute;inset:0;align-items:center;justify-content:center;
+  flex-direction:column;gap:.3rem}
+.loader-thwip span{font-family:'Bangers',cursive;font-size:2.4rem;color:var(--red);
+  text-shadow:3px 3px 0 #fff}
+.lt-star{position:absolute;width:100%;height:100%;background:
+  radial-gradient(circle,rgba(230,36,41,.4) 0%,transparent 70%)}
 @media (prefers-reduced-motion:reduce){
   .loader-reticle,.loader-hang{animation:none}
 }
 
-</style>
-</head>
 </style>
 </head>
 <body>
@@ -272,7 +297,6 @@ body.loading{overflow:hidden}
   <path d="M66 6 Q60 30 46 46 Q30 60 6 66"/>
   <path d="M98 9 Q90 45 69 69 Q45 90 9 98"/>
 </symbol>
-</defs></svg>
 </defs></svg>
 
 <!-- ⑤ WEB-SHOOTER LOADING SCREEN -->
@@ -984,6 +1008,9 @@ window.__sense = false;
 
   setTimeout(() => { minDone = true; maybeFinish(); }, 2000);       // min show time
   window.addEventListener('load', () => { winLoaded = true; maybeFinish(); });
+  setTimeout(() => {                                                // failsafe: force exit no matter what
+    if (!finished){ minDone = true; winLoaded = true; progress = 100; maybeFinish(); }
+  }, 6000);
 
   function exitLoader(){
     statusEl.textContent = 'SPIDER-SENSE: ONLINE ✓';
