@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aditya Bathre — Full Stack Python Developer</title>
+<!-- 🕷️ Spider-Man mask favicon -->
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<meta name="theme-color" content="#e62429">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@1,700&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BASE / PALETTE
+============================================================ */
+:root{
+  --ink:#0b1020; --ink-2:#111836; --red:#e62429; --red-dark:#a4161a;
+  --paper:#f7f0dc; --cyan:#35e0ff; --yellow:#ffd23f;
+  --web:rgba(240,244,255,.85);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ink);
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.6px);
+  background-size:22px 22px;
+  color:#f2f4ff; font-family:'Roboto Mono',monospace; overflow-x:hidden;
+}
+h1,h2,h3,.bang{font-family:'Bangers',cursive;letter-spacing:.04em;font-weight:400}
+img,svg{display:block}
+a{color:inherit}
+::selection{background:var(--red);color:#fff}
+html.fine, html.fine a, html.fine button{cursor:none}
+
+/* ============================================================
+   3D STAGE (feature ①) — fixed behind everything
+============================================================ */
+#stage{position:fixed;inset:0;z-index:0;pointer-events:none}
+#web-canvas{width:100%;height:100%}
+main{position:relative;z-index:1}
+
+/* ============================================================
+   MASTHEAD NAV
+============================================================ */
+.masthead{
+  position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:1.5rem;
+  padding:.7rem clamp(1rem,4vw,3rem);
+  background:rgba(11,16,32,.88);backdrop-filter:blur(8px);
+  border-bottom:3px solid var(--red);
+}
+.logo{font-family:'Bangers';font-size:1.5rem;color:#fff;text-decoration:none;text-shadow:2px 2px 0 var(--red)}
+.logo span{color:var(--red);text-shadow:2px 2px 0 #fff}
+.masthead nav{margin-left:auto;display:flex;gap:1.4rem;flex-wrap:wrap}
+.masthead nav a{
+  text-decoration:none;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85;
+  padding-bottom:3px;border-bottom:2px solid transparent;transition:.2s;
+}
+.masthead nav a:hover{opacity:1;color:var(--cyan);border-color:var(--cyan)}
+.earth-tag{font-size:.65rem;border:1px solid var(--red);color:var(--red);padding:.2rem .5rem;letter-spacing:.15em}
+
+/* ============================================================
+   HERO — comic splash page
+============================================================ */
+.hero{min-height:100vh;display:grid;grid-template-columns:1.15fr .85fr;align-items:center;
+  padding:6rem clamp(1rem,5vw,5rem) 4rem;position:relative}
+.corner-web{position:absolute;width:min(34vw,300px);height:auto;color:var(--web);opacity:.14;pointer-events:none}
+.corner-web.tr{top:70px;right:0;transform:scaleX(-1)}
+.corner-web.bl{bottom:0;left:0;transform:rotate(180deg)}
+.issue-tag{
+  display:inline-block;font-family:'Bangers';font-size:1.05rem;letter-spacing:.08em;
+  background:var(--yellow);color:var(--ink);padding:.35rem .9rem;transform:rotate(-2deg);
+  border:2px solid var(--ink);box-shadow:4px 4px 0 var(--red);margin-bottom:1.2rem;
+}
+.hero-title{font-size:clamp(3.4rem,9.5vw,7.6rem);line-height:.92;color:#fff;
+  text-shadow:4px 4px 0 var(--red),9px 9px 0 rgba(230,36,41,.3)}
+.hero-title .line{display:block;overflow:hidden}
+.hero-title .line > span{display:inline-block}
+.hero-title .accent{color:var(--red);text-shadow:4px 4px 0 #fff,9px 9px 0 rgba(255,255,255,.18)}
+.caption-box{
+  font-family:'Comic Neue';font-weight:700;font-style:italic;font-size:1.05rem;color:var(--ink);
+  background:var(--paper);border:2px solid var(--ink);padding:.7rem 1.1rem;max-width:46ch;
+  margin:1.6rem 0 2rem;transform:rotate(-1deg);box-shadow:5px 5px 0 rgba(0,0,0,.45);
+}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap}
+.btn{
+  font-family:'Bangers';font-size:1.3rem;letter-spacing:.06em;text-decoration:none;
+  padding:.75rem 1.8rem;border:2px solid #fff;transition:.2s;display:inline-block;
+}
+.btn-red{background:var(--red);color:#fff;box-shadow:5px 5px 0 #fff}
+.btn-red:hover{background:#fff;color:var(--red);box-shadow:5px 5px 0 var(--red)}
+.btn-ghost{background:transparent;color:#fff;border-color:var(--cyan);box-shadow:5px 5px 0 rgba(53,224,255,.35)}
+.btn-ghost:hover{background:var(--cyan);color:var(--ink)}
+.hero-stats{display:flex;gap:2.2rem;margin-top:2.6rem;flex-wrap:wrap}
+.stat b{font-family:'Bangers';font-size:2.4rem;color:var(--red);display:block;line-height:1;text-shadow:2px 2px 0 #fff}
+.stat small{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+.scroll-hint{position:absolute;bottom:1.4rem;left:50%;transform:translateX(-50%);font-size:.7rem;letter-spacing:.2em;opacity:.6;animation:bob 2s ease-in-out infinite}
+@keyframes bob{50%{transform:translate(-50%,8px)}}
+
+/* ============================================================
+   SECTIONS (comic panels)
+============================================================ */
+.section{padding:5.5rem clamp(1rem,6vw,6rem);position:relative;background:rgba(11,16,32,.94);
+  border-top:3px solid var(--red)}
+.section:nth-of-type(even){background:rgba(17,24,54,.94);border-top-color:var(--cyan)}
+.section-head{display:flex;align-items:baseline;gap:1rem;margin-bottom:3rem;flex-wrap:wrap}
+.section-head h2{font-size:clamp(2.4rem,5vw,3.6rem);color:#fff;text-shadow:3px 3px 0 var(--red)}
+.section:nth-of-type(even) .section-head h2{text-shadow:3px 3px 0 rgba(53,224,255,.55)}
+.panel-tag{font-size:.68rem;letter-spacing:.2em;border:1px solid currentColor;padding:.25rem .6rem;color:var(--yellow)}
+.web-icon{width:34px;height:34px;color:var(--web);opacity:.7}
+
+/* About */
+.about-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:2.5rem;align-items:start}
+.summary{font-size:1rem;line-height:1.85;opacity:.92}
+.summary strong{color:var(--cyan)}
+.edu-card{background:var(--ink);border:3px solid #fff;box-shadow:8px 8px 0 var(--red);padding:1.8rem}
+.edu-card h3{font-size:1.7rem;color:var(--yellow);margin-bottom:.4rem}
+.edu-card p{font-size:.85rem;line-height:1.7;opacity:.85}
+.meter{height:14px;background:#1c2547;border:1px solid var(--web);margin-top:1rem;position:relative;overflow:hidden}
+.meter i{position:absolute;inset:0;width:0;background:repeating-linear-gradient(45deg,var(--red) 0 8px,var(--red-dark) 8px 16px)}
+.meter-label{display:flex;justify-content:space-between;font-size:.7rem;margin-top:.4rem;letter-spacing:.1em}
+
+/* Skills */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.4rem}
+.skill-card{background:var(--ink);border:2px solid var(--web);padding:1.4rem;transition:.25s;position:relative}
+.skill-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:var(--red)}
+.skill-card:nth-child(even)::before{background:var(--cyan)}
+.skill-card:hover{transform:translateY(-6px) rotate(-.6deg);box-shadow:7px 7px 0 var(--red);border-color:#fff}
+/* bulletproof scroll-reveal states (replaces GSAP stagger) */
+.skill-card.pre{
+  opacity:0;
+  transform:translateY(46px) rotate(-2deg);
+  transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1);
+}
+.skill-card.pre:nth-child(even){transform:translateY(46px) rotate(2deg)}
+.skill-card.pre.in{opacity:1;transform:none}
+.skill-card h3{font-size:1.5rem;color:#fff;margin-bottom:.7rem}
+.chip{display:inline-block;font-size:.72rem;background:rgba(230,36,41,.16);border:1px solid var(--red);
+  color:#ffb3b5;padding:.22rem .55rem;margin:.18rem .25rem 0 0}
+.skill-card:nth-child(even) .chip{background:rgba(53,224,255,.1);border-color:var(--cyan);color:#a9f1ff}
+.skill-card .field-note{
+  margin-top:.9rem;font-size:.68rem;line-height:1.5;
+  color:var(--yellow);opacity:.85;font-style:italic;
+  border-top:1px dashed rgba(255,255,255,.15);padding-top:.7rem;
+}
+/* ============================================================
+   MISSIONS — swing-in cards (feature ③)
+============================================================ */
+.missions{display:grid;gap:4.5rem;max-width:980px;margin:0 auto}
+.web-drop{position:relative;margin-top:2.5rem}
+.thread{position:absolute;left:50%;top:-78px;width:2px;height:78px;transform-origin:top center;
+  background:linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.85))}
+.thread::after{content:'';position:absolute;bottom:-4px;left:-3.5px;width:9px;height:9px;border-radius:50%;background:var(--red);border:1px solid #fff}
+.project-card{
+  background:var(--ink);border:3px solid #fff;padding:2rem;position:relative;
+  box-shadow:10px 10px 0 var(--acc,var(--red));
+}
+.web-drop:nth-child(2) .project-card{--acc:var(--cyan)}
+.web-drop:nth-child(3) .project-card{--acc:var(--yellow)}
+.mission-tag{position:absolute;top:-16px;left:1.4rem;font-family:'Bangers';font-size:1rem;letter-spacing:.08em;
+  background:var(--acc,var(--red));color:var(--ink);padding:.15rem .8rem;transform:rotate(-2deg);border:2px solid var(--ink)}
+.project-card h3{font-size:2rem;color:#fff;margin:.4rem 0 .3rem}
+.project-card h3 span{color:var(--acc,var(--red))}
+.meta{font-size:.7rem;letter-spacing:.15em;opacity:.6;text-transform:uppercase}
+.project-card ul{list-style:none;margin:1rem 0}
+.project-card li{font-size:.86rem;line-height:1.7;padding-left:1.3rem;position:relative;opacity:.9}
+.project-card li::before{content:'▸';position:absolute;left:0;color:var(--acc,var(--red))}
+.tech-tag{display:inline-block;font-size:.72rem;background:var(--acc,var(--red));color:var(--ink);
+  font-weight:700;padding:.25rem .6rem;margin:.3rem .3rem 0 0;transform:skewX(-8deg)}
+
+/* Training + achievements */
+.arc-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.arc-card{background:var(--ink);border:2px solid var(--web);padding:1.8rem;border-left:6px solid var(--cyan)}
+.arc-card:first-child{border-left-color:var(--red)}
+.arc-card h3{font-size:1.6rem;color:#fff}
+.arc-card .org{color:var(--yellow);font-size:.85rem;margin:.2rem 0 .8rem}
+.arc-card li{font-size:.83rem;line-height:1.75;margin-left:1.1rem;opacity:.88}
+.pow-strip{display:flex;gap:1.4rem;flex-wrap:wrap;margin-top:3rem}
+.pow{font-family:'Bangers';font-size:1.15rem;background:var(--paper);color:var(--ink);padding:.8rem 1.4rem;
+  border:2px solid var(--ink);box-shadow:5px 5px 0 var(--red);transform:rotate(-1.5deg)}
+.pow:nth-child(even){transform:rotate(1.5deg);box-shadow:5px 5px 0 var(--cyan)}
+
+/* Contact */
+.contact-panel{max-width:760px;margin:0 auto;text-align:center;border:3px solid #fff;background:var(--ink);
+  padding:3.5rem 2rem;box-shadow:12px 12px 0 var(--red);position:relative}
+.contact-panel h2{font-size:clamp(2.4rem,6vw,4rem);text-shadow:3px 3px 0 var(--red)}
+.contact-panel .sub{font-family:'Comic Neue';font-style:italic;font-weight:700;opacity:.85;margin:.8rem 0 2rem}
+.contact-rows{display:flex;justify-content:center;gap:1.6rem;flex-wrap:wrap;margin-top:2.2rem;font-size:.82rem;opacity:.85}
+.sense-badge{display:none;position:absolute;top:-22px;left:50%;transform:translateX(-50%) rotate(-2deg);
+  font-family:'Bangers';background:var(--red);color:#fff;padding:.3rem 1rem;border:2px solid #fff;letter-spacing:.08em}
+.contact-panel.sensed{animation:senseGlow .5s ease-in-out infinite alternate}
+.contact-panel.sensed .sense-badge{display:block}
+@keyframes senseGlow{from{box-shadow:12px 12px 0 var(--red),0 0 0 0 rgba(230,36,41,.7)}
+  to{box-shadow:12px 12px 0 var(--red),0 0 60px 14px rgba(230,36,41,.55)}}
+
+footer{padding:2rem;text-align:center;font-size:.72rem;opacity:.65;border-top:1px solid rgba(255,255,255,.12)}
+.konami-hint{border:1px dashed var(--web);padding:.2rem .6rem;margin-left:.6rem;opacity:.8}
+
+/* ============================================================
+   CURSOR + WEB LINE (feature ②)
+============================================================ */
+#web-overlay{position:fixed;inset:0;width:100%;height:100%;z-index:9500;pointer-events:none}
+#web-line{fill:none;stroke:rgba(255,255,255,.9);stroke-width:1.6;opacity:0;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.6))}
+#cursor{position:fixed;left:0;top:0;z-index:10000;pointer-events:none;opacity:0}
+.c-dot{position:absolute;width:7px;height:7px;background:var(--red);border:1.5px solid #fff;border-radius:50%;transform:translate(-50%,-50%)}
+.c-ring{position:absolute;width:30px;height:30px;border:1.5px dashed rgba(255,255,255,.75);border-radius:50%;
+  transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s}
+#cursor.aiming .c-ring{width:46px;height:46px;border-color:var(--red);animation:spin 2.6s linear infinite}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.thwip-line{stroke:rgba(255,255,255,.85);stroke-width:1.4}
+
+/* ============================================================
+   SPIDER-SENSE EASTER EGG (feature ④)
+============================================================ */
+#sense-overlay{position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:0;transition:opacity .25s}
+#sense-overlay.on{opacity:1}
+#sense-overlay::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,transparent 35%,rgba(230,36,41,.55) 100%);
+  animation:sensePulse .45s ease-in-out infinite alternate}
+@keyframes sensePulse{to{opacity:.45}}
+.sense-burst{position:absolute;top:14%;left:50%;transform:translateX(-50%) rotate(-4deg)}
+.sense-burst .star{position:absolute;inset:-38px -56px;background:var(--yellow);z-index:-1;
+  clip-path:polygon(50% 0,61% 22%,85% 10%,82% 35%,100% 40%,86% 58%,98% 80%,72% 76%,60% 100%,46% 78%,22% 92%,26% 66%,0 58%,16% 42%,4% 18%,30% 22%)}
+.sense-burst h2{font-size:clamp(2.2rem,6.5vw,5rem);color:var(--red);-webkit-text-stroke:1.5px #fff;
+  text-shadow:5px 5px 0 var(--ink);text-align:center;line-height:.95}
+.sense-ring{position:fixed;left:50%;top:50%;width:120px;height:120px;margin:-60px 0 0 -60px;
+  border:3px solid rgba(230,36,41,.85);border-radius:50%;pointer-events:none;z-index:9001}
+body.sensing #page-wrap{animation:shake .09s linear infinite}
+@keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(-7px,4px)}
+  50%{transform:translate(6px,-6px)}75%{transform:translate(-5px,-3px)}100%{transform:translate(5px,6px)}}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;padding-top:7.5rem;text-align:left}
+  .about-grid,.arc-grid{grid-template-columns:1fr}
+  .masthead nav{gap:.9rem}
+  .masthead nav a{font-size:.68rem}
+}
+@media (prefers-reduced-motion:reduce){
+  body.sensing #page-wrap{animation:none}
+  .scroll-hint{animation:none}
+}
+  @media (prefers-reduced-motion:reduce){
+    body.sensing #page-wrap{animation:none}
+    .scroll-hint{animation:none}
+  }
+
+/* ============================================================
+   ⑤ WEB-SHOOTER LOADING SCREEN
+============================================================ */
+body.loading{overflow:hidden}
+#loader{
+  position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;
+  ... (all your loader CSS) ...
+}
+@media (prefers-reduced-motion:reduce){
+  .loader-reticle,.loader-hang{animation:none}
+}
+
+</style>
+</head>
+</style>
+</head>
+<body>
+<div id="page-wrap">
+
+<!-- shared web SVG symbol -->
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="webIcon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+  <path d="M0 0 L100 8 M0 0 L96 42 M0 0 L70 70 M0 0 L42 96 M0 0 L8 100"/>
+  <path d="M33 3 Q30 15 23 23 Q15 30 3 33"/>
+  <path d="M66 6 Q60 30 46 46 Q30 60 6 66"/>
+  <path d="M98 9 Q90 45 69 69 Q45 90 9 98"/>
+</symbol>
+</defs></svg>
+</defs></svg>
+
+<!-- ⑤ WEB-SHOOTER LOADING SCREEN -->
+<div id="loader" role="status" aria-label="Loading portfolio">
+  <svg class="loader-corner lc-tl" aria-hidden="true"><use href="#webIcon"/></svg>
+  <svg class="loader-corner lc-br" aria-hidden="true"><use href="#webIcon"/></svg>
+
+  <!-- mini spider hanging on a thread -->
+  <div class="loader-hang" aria-hidden="true">
+    <span class="hang-thread"></span>
+    <svg class="hang-spider" viewBox="0 0 40 44" fill="none">
+      <path d="M13 20 Q5 16 2 9 M14 24 Q6 24 2 20 M14 28 Q7 31 3 36 M15 31 Q9 37 7 43
+               M27 20 Q35 16 38 9 M26 24 Q34 24 38 20 M26 28 Q33 31 37 36 M25 31 Q31 37 33 43"
+            stroke="#f2f4ff" stroke-width="2" stroke-linecap="round"/>
+      <ellipse cx="20" cy="28" rx="7" ry="9" fill="#e62429"/>
+      <circle cx="20" cy="16" r="5.5" fill="#e62429"/>
+      <circle cx="17.8" cy="15" r="1.4" fill="#fff"/>
+      <circle cx="22.2" cy="15" r="1.4" fill="#fff"/>
+    </svg>
+  </div>
+
+  <!-- central web-shooter target -->
+  <div class="loader-core">
+    <div class="loader-reticle" aria-hidden="true"></div>
+    <svg id="loader-web" viewBox="-100 -100 200 200" aria-hidden="true"></svg>
+    <div class="loader-pct bang">0%</div>
+  </div>
+
+  <div class="loader-bar"><i></i></div>
+  <div class="loader-status bang">LOADING WEB FLUID...</div>
+  <div class="loader-tip">TARGET ACQUIRED · HOLD YOUR WEB</div>
+
+  <!-- completion burst -->
+  <div class="loader-thwip" aria-hidden="true"><div class="lt-star"></div><span>THWIP!</span></div>
+</div>
+
+<!-- ① 3D stage -->
+<div id="stage"><canvas id="web-canvas"></canvas></div>
+
+<!-- ② cursor + web overlay -->
+<svg id="web-overlay" aria-hidden="true"><path id="web-line"/></svg>
+<div id="cursor" aria-hidden="true"><span class="c-dot"></span><span class="c-ring"></span></div>
+
+<!-- ④ spider-sense overlay -->
+<div id="sense-overlay" aria-hidden="true">
+  <div class="sense-burst"><div class="star"></div><h2>SPIDER-SENSE<br>TINGLING!</h2></div>
+</div>
+
+<header class="masthead">
+  <a class="logo" href="#top">ADITYA<span>★</span>BATHRE</a>
+  <span class="earth-tag">EARTH-2004</span>
+  <nav>
+    <a href="#about">About</a><a href="#skills">Arsenal</a><a href="#missions">Missions</a>
+    <a href="#training">Training</a><a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="page">
+
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <svg class="corner-web tr"><use href="#webIcon"/></svg>
+    <svg class="corner-web bl"><use href="#webIcon"/></svg>
+    <div>
+      <span class="issue-tag">AMAZING AIML DEVELOPER #01 · FIRST APPEARANCE</span>
+      <h1 class="hero-title">
+        <span class="line"><span>ADITYA</span></span>
+        <span class="line"><span class="accent">BATHRE</span></span>
+      </h1>
+      <div class="caption-box">"Your friendly neighborhood <b>FULL STACK AIML DEVELOPER</b> — Building intelligent AI systems, ML models, and real-world applications across the evolving landscape of Generative AI."</div>
+      <div class="hero-cta">
+        <a class="btn btn-red" href="#missions">ENTER THE WEB</a>
+        <!-- Replace with your actual resume file -->
+        <a class="btn btn-ghost" href="./Aditya Bathre AiMl Engineer.pdf" download>DOWNLOAD RÉSUMÉ</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><b class="stat-num" data-count="7.98" data-dec="2">0</b><small>CGPA / 10</small></div>
+        <div class="stat"><b class="stat-num" data-count="92" data-suffix="%">0</b><small>Best ML Accuracy</small></div>
+        <div class="stat"><b class="stat-num" data-count="5" data-suffix="+">0</b><small>Projects & Experience</small></div>
+      </div>
+    </div>
+    <div><!-- spider zone (3D canvas sits behind) --></div>
+    <div class="scroll-hint">▼ WEB-SLINGE DOWN ▼</div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="section-head"><svg class="web-icon"><use href="#webIcon"/></svg><h2>ORIGIN STORY</h2><span class="panel-tag">PANEL 01</span></div>
+    <div class="about-grid">
+      <p class="summary">Motivated and detail-oriented <strong>Full Stack AIML Developer</strong> with strong foundations in <strong>Artificial Intelligence</strong>, <strong>Machine Learning</strong> and Agentic AI. Experienced in building real-world AI-powered systems, machine learning solutions, and RAG-based applications. Skilled in Python, LangChain, LangGraph, FAISS, and data-driven development, with a passion for building scalable AI solutions, solving practical problems, and continuously growing as an AI/ML professional.</p>
+      <div class="edu-card">
+        <h3>🎓 B.E. COMPUTER SCIENCE & Business System</h3>
+        <p>Oriental Institute of Science and Technology, Bhopal, Madhya Pradesh<br>October 2021 – july 2025</p>
+        <div class="meter"><i id="cgpaMeter"></i></div>
+        <div class="meter-label"><span>CGPA</span><span>7.98 / 10.00</span></div>
+      </div>
+    </div>
+  </section>
+
+      <!-- SKILLS -->
+  <section class="section" id="skills">
+    <div class="section-head"><svg class="web-icon"><use href="#webIcon"/></svg><h2>TECH ARSENAL</h2><span class="panel-tag">PANEL 02</span></div>
+
+    <div class="skills-grid">
+      <div class="skill-card">
+        <h3>⚡ Programming Languages</h3>
+        <span class="chip">PYTHON</span><span class="chip">C/C++</span><span class="chip">SQL</span><span class="chip">GEN-AI</span><span class="chip">AGENTIC-AI</span><span class="chip">ML</span><span class="chip">DL</span>
+      </div>
+
+      <div class="skill-card">
+        <h3>🧬 Frameworks &amp; Libraries</h3>
+        <span class="chip">LANGCHAIN</span><span class="chip">LANGGRAPH</span>
+        <span class="chip">NUMPY</span><span class="chip">PANDAS</span>
+        <span class="chip">MATPLOTLIB</span><span class="chip">SEABORN</span>
+        <span class="chip">STREAMLIT</span><span class="chip">GRADIO</span>
+      </div>
+
+      <div class="skill-card">
+        <h3>🗄️ Database Technologies</h3>
+        <span class="chip">MySQL</span><span class="chip">SQLite</span>
+        <span class="chip">Database Normalization</span><span class="chip">Schema Design</span>
+      </div>
+
+      <div class="skill-card">
+        <h3>🛠️ Developer Tools</h3>
+        <span class="chip">Git</span><span class="chip">GitHub</span>
+        <br>
+        <span class="chip">VS Code</span><span class="chip">CI/CD</span>
+      </div>
+
+      <div class="skill-card">
+        <h3>🧠 Core Competencies</h3>
+        <span class="chip">AI/ML Developer</span><span class="chip">RAG</span>
+        <span class="chip">Agentic AI</span><span class="chip">OOP</span>
+        <span class="chip">MLOps</span><span class="chip">LLMOps</span>
+        <span class="chip">Data Analysis</span><span class="chip">Data Science</span>
+      </div>
+
+      <div class="skill-card">
+        <h3>📊 Machine Learning</h3>
+        <span class="chip">Regression</span><span class="chip">Classification</span>
+        <span class="chip">Clustering</span><span class="chip">Model Evaluation</span>
+        <span class="chip">Model Deployment</span><span class="chip">Model Monitoring</span>
+        <span class="chip">Data Analysis</span><span class="chip">EDA</span>        
+        <p class="field-note">
+          ⚡ Applied ML to freight cost prediction, invoice risk classification, and social media addiction analysis.
+        </p>
+      </div>
+
+      <div class="skill-card">
+        <h3>🤖 Artificial Intelligence</h3>
+        <span class="chip">Generative AI</span>
+        <span class="chip">Agentic AI</span>
+        <span class="chip">RAG</span>
+        <span class="chip">LLMs</span><span class="chip">LLMOps</span>
+        <span class="chip">FAISS</span><span class="chip">Chroma DB</span>
+        <p class="field-note">
+          ⚡ Built and contributed to GenAI, Agentic AI, and RAG applications including PostPilot and ChatMyVideo, Used API Openai, Gemini and local Ollama llama model.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MISSIONS -->
+  <section class="section" id="missions">
+    <div class="section-head"><svg class="web-icon"><use href="#webIcon"/></svg><h2>MISSION LOG</h2><span class="panel-tag">PANEL 03</span></div>
+    <div class="missions">
+
+      <div class="web-drop">
+        <div class="thread"></div>
+        <article class="project-card swing">
+          <span class="mission-tag">MISSION 01</span>
+          <h3>VENDOR INVOICE <span>INTELLIGENCE SYSTEM</span></h3>
+            <p class="meta">AI / Machine Learning · Freight Cost Prediction &amp; Invoice Risk Flagging</p>
+            <ul>
+              <li>Developed a machine learning system for <b>freight cost prediction</b> using regression models and invoice data.</li>
+              <li>Built an <b>invoice risk classification</b> workflow to identify high-risk invoices and support automated risk assessment.</li>
+              <li>Evaluated the classification model using <b>F1-score</b> to measure its effectiveness in identifying high-risk invoices.</li>
+            </ul>
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Machine Learning</span>
+            <span class="tech-tag">Regression</span>
+            <span class="tech-tag">Classification</span>
+        </article>
+      </div>
+
+      <div class="web-drop">
+        <div class="thread"></div>
+        <article class="project-card swing">
+          <span class="mission-tag">MISSION 02</span>
+          <h3>CHATMYVIDEO <span>YOUTUBE ASSISTANT</span></h3>
+          <p class="meta">AI / RAG-Based Conversational Assistant</p>
+          <ul>
+            <li>Contributed to the development of a <b>RAG-based conversational AI system</b> for querying and interacting with YouTube video content.</li>
+            <li>Implemented semantic retrieval to enable users to <b>ask questions about video content</b> and receive context-aware responses.</li>
+            <li>Worked with modern AI technologies to build a practical <b>LLM-powered question-answering workflow</b> for YouTube videos.</li>
+          </ul>
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">RAG</span>
+          <span class="tech-tag">LangChain</span>
+          <span class="tech-tag">LLMs</span>
+          <span class="tech-tag">FAISS</span>
+        </article>
+      </div>
+
+      <div class="web-drop">
+        <div class="thread"></div>
+        <article class="project-card swing">
+          <span class="mission-tag">MISSION 03</span>
+          <h3>SOCIAL MEDIA ADDICTION <span>ANALYSIS &amp; PREDICTION</span></h3>
+          <p class="meta">AI / Machine Learning · EDA &amp; Prediction</p>
+          <ul>
+            <li>Performed <b>Exploratory Data Analysis (EDA)</b> on social media usage data to identify patterns related to addiction, productivity, and user engagement.</li>
+            <li>Processed and visualized data using <b>Python, Pandas, Matplotlib, and Seaborn</b> to analyze key behavioral trends.</li>
+            <li>Developed a machine learning model to <b>predict social media addiction</b> and identified behavioral factors such as scroll rate, self-control, and watch time affecting user engagement.</li>
+          </ul>
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">Machine Learning</span>
+          <span class="tech-tag">Pandas</span>
+          <span class="tech-tag">Matplotlib</span>
+          <span class="tech-tag">Seaborn</span>
+        </article>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TRAINING -->
+  <section class="section" id="training">
+    <div class="section-head"><svg class="web-icon"><use href="#webIcon"/></svg><h2>TRAINING ARC</h2><span class="panel-tag">PANEL 04</span></div>
+    <div class="arc-grid">
+      <div class="arc-card">
+        <h3>SOFTWARE DEVELOPER <span>AIML</span></h3>
+        <p class="org">Intellostack Technologies Pvt. Ltd. · July 2025 – Aug - 2026</p>
+        <ul>
+          <li>Developed and contributed to <b>AI/ML solutions</b> including freight cost prediction and automated invoice risk flagging using machine learning models.</li>
+          <li>Worked on <b>RAG-based applications</b> such as ChatMyVideo, enabling conversational interaction with YouTube video content.</li>
+          <li>Contributed to <b>PostPilot</b>, an Agentic AI workflow built with LangGraph for generating and refining professional LinkedIn content.</li>
+        </ul>
+      </div>
+      <div class="arc-card">
+        <h3>AI DATA SCIENTIST INTERN - 2024</h3>
+        <p class="org">PMKVY Skill India Scheme · 690 Hours</p>
+        <ul>
+          <li>Completed a <b>690-hour AI Data Scientist internship</b> focused on practical data science and machine learning workflows.</li>
+          <li>Gained hands-on experience in <b>data handling, cleaning, preprocessing, and transformation</b> to prepare datasets for analysis and model development.</li>
+          <li>Worked on building <b>machine learning models and predictions</b> using prepared datasets and applying data-driven approaches to solve practical problems.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pow-strip">
+      <span class="pow">💥 Built real-world AI/ML projects with practical applications!</span>
+      <span class="pow">⚡ Generative AI + RAG + Agentic AI development!</span>
+      <span class="pow">🧠 Machine learning models for prediction & classification!</span>
+      <span class="pow">📈 Consistent project-based learning!</span>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <div class="contact-panel">
+      <span class="sense-badge">🕷 SPIDEY-SENSE LOCKED: HIRE ME</span>
+      <h2>SEND A SIGNAL</h2>
+      <p class="sub">"With great code comes great responsibility." — Ready to join your team as an AIML professional.</p>
+      <a href="mailto:bathreaditya@gmail.com" class="btn btn-red">SEND EMAIL</a>
+      <div class="contact-rows">
+        <span>📞 +91-7869202112</span>
+        <span>📍 Bhopal, Madhya Pradesh 462022</span>
+        <!-- Replace # with your real LinkedIn / portfolio URLs -->
+        <span><a href="https://www.linkedin.com/in/aditya-bathre-78b712249/" target="_blank">🔗 LinkedIn</a></span>
+        <span><a href="https://github.com/Developer-aadi-AI" target="_blank">🔗 Github</a></span>
+        <span><a href="nnnnnnnnnnnnn" target="_blank">🌐 Portfolio</a></span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>© 2026 Vedagiri Sankar — spun, not templated.
+  <span class="konami-hint" title="Try it on your keyboard…">↑ ↑ ↓ ↓ ← → ← → B A</span>
+</footer>
+</div><!-- /page-wrap -->
+
+<!-- LIBS -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollToPlugin.min.js"></script>
+
+<script>
+/* ============================================================
+   ENV FLAGS
+============================================================ */
+const finePointer   = matchMedia('(pointer:fine)').matches;
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+if (finePointer) document.documentElement.classList.add('fine');
+
+/* ============================================================
+   ① 3D SPIDER — procedural fallback + GLTF swap-in
+   Drop a Sketchfab .glb at ./models/spider.glb and it auto-loads.
+============================================================ */
+const MODEL_URL = './models/spider.glb';   // ← your model goes here (optional)
+let rig = null, legs = [], eyeMats = [], redLight = null;
+let baseX = 2.5, baseY = 0.2, rigScale = 1;
+const mouse = { x: 0, y: 0 };
+window.__sense = false;
+
+(function initScene(){
+  if (!window.THREE) return;
+  const canvas = document.getElementById('web-canvas');
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true }); }
+  catch(e){ document.getElementById('stage').style.display = 'none'; return; }
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(innerWidth, innerHeight);
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, .1, 100);
+  camera.position.set(0, 0, 7);
+
+  scene.add(new THREE.AmbientLight(0x8899bb, .5));
+  const key = new THREE.DirectionalLight(0xffffff, .9); key.position.set(4, 6, 7); scene.add(key);
+  redLight = new THREE.PointLight(0xe62429, 1.4, 40); redLight.position.set(-5, 2, 3); scene.add(redLight);
+  const rim = new THREE.PointLight(0x35e0ff, .7, 40); rim.position.set(4, -2, 4); scene.add(rim);
+
+  rig = new THREE.Group(); scene.add(rig);
+  const holder = new THREE.Group(); rig.add(holder);
+
+  /* web thread the spider hangs from */
+  const threadGeo = new THREE.CylinderGeometry(.012, .012, 1, 6);
+  threadGeo.translate(0, .5, 0);
+  const thread = new THREE.Mesh(threadGeo,
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .5 }));
+  scene.add(thread);
+  const ANCHOR_Y = 4.4;
+
+  /* ---- procedural low-poly spider (Spider-Man palette) ---- */
+  function buildProceduralSpider(){
+    const g = new THREE.Group();
+    const redMat  = new THREE.MeshStandardMaterial({ color: 0xe62429, flatShading: true, roughness: .35, metalness: .2 });
+    const darkMat = new THREE.MeshStandardMaterial({ color: 0x10162e, flatShading: true, roughness: .55, metalness: .35 });
+    const eyeMat  = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xbfe9ff, emissiveIntensity: .9, flatShading: true });
+
+    const abdomen = new THREE.Mesh(new THREE.IcosahedronGeometry(.8, 1), redMat);
+    abdomen.position.set(0, .05, -1.05); abdomen.scale.set(1, .9, 1.25);
+    const ceph = new THREE.Mesh(new THREE.IcosahedronGeometry(.5, 1), darkMat);
+    ceph.position.set(0, 0, -.05);
+    const mark = new THREE.Mesh(new THREE.OctahedronGeometry(.16, 0), darkMat);
+    mark.position.set(0, .5, -.8); mark.scale.set(1, 1.6, .4);
+    g.add(abdomen, ceph, mark);
+
+    const eyeGeo = new THREE.SphereGeometry(.17, 8, 6);
+    [-1, 1].forEach(s => {
+      const eye = new THREE.Mesh(eyeGeo, eyeMat);
+      eye.position.set(s*.22, .14, .38); eye.scale.set(1.15, 1.5, .5); eye.rotation.z = -s*.45;
+      g.add(eye);
+    });
+
+    const seg = (len, r, mat) => {
+      const geo = new THREE.CylinderGeometry(r, r*.6, len, 5);
+      geo.translate(0, -len/2, 0);
+      return new THREE.Mesh(geo, mat);
+    };
+    const zs = [-.85, -.35, .1, .5], spread = [.55, .2, -.2, -.55];
+    [-1, 1].forEach(side => zs.forEach((z, i) => {
+      const leg = new THREE.Group();
+      leg.position.set(side*.32, .05, z);
+      leg.rotation.y = side * spread[i];
+      const upper = seg(.95, .06, darkMat);  upper.rotation.z = side * 1.05;
+      const lower = seg(1.05, .045, darkMat); lower.position.y = -.95; lower.rotation.z = -side * 1.7;
+      upper.add(lower); leg.add(upper); g.add(leg);
+      legs.push({ upper, base: side * 1.05, side, phase: i * 1.3 + (side > 0 ? 0 : .7) });
+    }));
+    eyeMats.push(eyeMat);
+    return g;
+  }
+
+  /* ---- try external GLTF, fall back to procedural ---- */
+  if (window.THREE.GLTFLoader) {
+    new THREE.GLTFLoader().load(MODEL_URL,
+      gltf => {
+        const m = gltf.scene;
+        const box = new THREE.Box3().setFromObject(m);
+        const size = box.getSize(new THREE.Vector3());
+        m.scale.setScalar(2.6 / Math.max(size.x, size.y, size.z));
+        box.setFromObject(m);
+        m.position.sub(box.getCenter(new THREE.Vector3()));
+        holder.add(m);
+      },
+      undefined,
+      () => holder.add(buildProceduralSpider())   // no file? build it from code
+    );
+  } else holder.add(buildProceduralSpider());
+
+  function layout(){
+    if (innerWidth < 860){ baseX = 0; baseY = 1.9; rigScale = .7; }
+    else                 { baseX = 2.5; baseY = .2; rigScale = 1; }
+  }
+  layout();
+  addEventListener('resize', () => {
+    camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight); layout();
+  });
+  addEventListener('mousemove', e => {
+    mouse.x = e.clientX/innerWidth - .5; mouse.y = e.clientY/innerHeight - .5;
+  });
+
+  const clock = new THREE.Clock();
+  (function tick(){
+    requestAnimationFrame(tick);
+    const t = clock.getElapsedTime();
+    if (rig){
+      rig.position.x = baseX;
+      rig.position.y = baseY + Math.sin(t*1.4)*.22;
+      rig.scale.setScalar(rigScale);
+      const targetRot = reducedMotion ? 0 : mouse.x*.55 + Math.sin(t*.5)*.2;
+      rig.rotation.y += (targetRot - rig.rotation.y)*.06;
+      rig.rotation.z  = Math.sin(t*.9)*.06;
+      if (window.__sense){                       // easter-egg agitation
+        rig.rotation.z += (Math.random()-.5)*.1;
+        rig.position.y += (Math.random()-.5)*.06;
+        eyeMats.forEach(m => m.emissiveIntensity = 2.6);
+        redLight.intensity = 2.6 + Math.random()*1.2;
+      } else {
+        eyeMats.forEach(m => m.emissiveIntensity = .9);
+        redLight.intensity = 1.4;
+      }
+      if (!reducedMotion) legs.forEach(l =>
+        l.upper.rotation.z = l.base + Math.sin(t*2.2 + l.phase)*.07*l.side);
+      const len = ANCHOR_Y - rig.position.y;
+      thread.scale.y = len; thread.position.set(rig.position.x, rig.position.y, rig.position.z);
+    }
+    renderer.render(scene, camera);
+  })();
+
+  /* fade the spider as you leave the hero */
+  if (window.gsap) gsap.to('#stage', { opacity: .14, ease: 'none',
+    scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }});
+})();
+
+/* ============================================================
+   ② WEB-SHOOTING CURSOR
+============================================================ */
+(function initCursor(){
+  if (!finePointer || !window.gsap) return;
+  const cursor = document.getElementById('cursor');
+  const webPath = document.getElementById('web-line');
+  const overlay = document.getElementById('web-overlay');
+  const HOVER = 'a, button, .skill-card, .project-card, .pow';
+  let cx = innerWidth/2, cy = innerHeight/2, tx = cx, ty = cy;
+  let hoverEl = null, attached = false;
+
+  addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; cursor.style.opacity = 1; });
+  document.documentElement.addEventListener('mouseleave', () => cursor.style.opacity = 0);
+
+  document.addEventListener('mouseover', e => {
+    const t = e.target.closest(HOVER);
+    if (t === hoverEl) return;
+    hoverEl = t;
+    cursor.classList.toggle('aiming', !!t);
+    t ? attachWeb() : detachWeb();
+  });
+
+  function attachWeb(){
+    attached = true; updateWebLine();
+    const len = webPath.getTotalLength();
+    webPath.style.opacity = 1;
+    gsap.fromTo(webPath, { strokeDasharray: len, strokeDashoffset: len },
+      { strokeDashoffset: 0, duration: .22, ease: 'power2.out', overwrite: true });
+  }
+  function detachWeb(){
+    if (!attached) return; attached = false;
+    const len = webPath.getTotalLength();
+    gsap.to(webPath, { strokeDashoffset: len, duration: .18, ease: 'power2.in',
+      overwrite: true, onComplete: () => webPath.style.opacity = 0 });
+  }
+  function updateWebLine(){
+    if (!hoverEl) return;
+    const r = hoverEl.getBoundingClientRect();
+    const px = Math.max(r.left, Math.min(cx, r.right));   // aim at nearest edge
+    const py = Math.max(r.top,  Math.min(cy, r.bottom));
+    const mx = (cx+px)/2, my = (cy+py)/2 + Math.hypot(px-cx, py-cy)*.08; // sag
+    webPath.setAttribute('d', `M ${cx} ${cy} Q ${mx} ${my} ${px} ${py}`);
+    if (attached){
+      const len = webPath.getTotalLength();
+      webPath.setAttribute('stroke-dasharray', len);
+      webPath.setAttribute('stroke-dashoffset', 0);
+    }
+  }
+  /* click → radial thwip burst */
+  addEventListener('click', e => {
+    if (reducedMotion) return;
+    for (let i = 0; i < 7; i++){
+      const a = (i/7)*Math.PI*2 + Math.random()*.5;
+      const d = 45 + Math.random()*55;
+      const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+      l.setAttribute('class','thwip-line');
+      l.setAttribute('x1', e.clientX); l.setAttribute('y1', e.clientY);
+      l.setAttribute('x2', e.clientX + Math.cos(a)*d);
+      l.setAttribute('y2', e.clientY + Math.sin(a)*d);
+      overlay.appendChild(l);
+      gsap.fromTo(l, { opacity: 1 }, { opacity: 0, duration: .45, delay: .05,
+        onComplete: () => l.remove() });
+    }
+  });
+  (function loop(){
+    requestAnimationFrame(loop);
+    cx += (tx-cx)*.35; cy += (ty-cy)*.35;
+    cursor.style.transform = `translate(${cx}px,${cy}px)`;
+    if (attached) updateWebLine();
+  })();
+})();
+
+/* ============================================================
+   ③ GSAP SCROLL ANIMATIONS — swing-in project cards
+============================================================ */
+(function initScroll(){
+  if (!window.gsap) return;
+  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+  /* hero entrance */
+  if (!reducedMotion){
+    const intro = gsap.timeline({ delay: .2 });
+    intro.from('.masthead',        { y: -60, opacity: 0, duration: .6, ease: 'power3.out' })
+         .from('.issue-tag',       { scale: 0, rotation: -20, ease: 'back.out(2.2)' }, '-=.2')
+         .from('.hero-title .line > span', { yPercent: 115, duration: .8, stagger: .12, ease: 'power4.out' }, '-=.3')
+         .from('.caption-box',     { x: -50, opacity: 0 }, '-=.4')
+         .from('.hero-cta > *',    { y: 26, opacity: 0, stagger: .1 }, '-=.3')
+         .from('.stat',            { y: 30, opacity: 0, stagger: .1 }, '-=.25');
+  }
+
+  /* animated stat counters */
+  gsap.utils.toArray('.stat-num').forEach(el => {
+    const target = parseFloat(el.dataset.count), dec = +(el.dataset.dec || 0), suf = el.dataset.suffix || '';
+    const o = { v: 0 };
+    gsap.to(o, { v: target, duration: 1.6, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 90%' },
+      onUpdate: () => el.textContent = o.v.toFixed(dec) + suf });
+  });
+  gsap.to('#cgpaMeter', { width: '80%', duration: 1.4, ease: 'power3.out',
+    scrollTrigger: { trigger: '#cgpaMeter', start: 'top 92%' }});
+
+  gsap.utils.toArray('.section-head').forEach(h =>
+    gsap.from(h, { x: -70, opacity: 0, skewX: -8, duration: .7, ease: 'power3.out',
+      scrollTrigger: { trigger: h, start: 'top 88%' }}));
+
+      /* skills reveal — class-based, cannot get stuck */
+  const skillCards = gsap.utils.toArray('.skill-card');
+  skillCards.forEach((c, i) => {
+    c.classList.add('pre');
+    c.style.transitionDelay = (i * 0.09) + 's';
+  });
+  ScrollTrigger.create({
+    trigger: '.skills-grid',
+    start: 'top 85%',
+    once: true,
+    onEnter: () => {
+      skillCards.forEach(c => c.classList.add('in'));
+      /* cleanup: restore normal hover behaviour afterwards */
+      setTimeout(() => skillCards.forEach(c => {
+        c.classList.remove('pre', 'in');
+        c.style.transitionDelay = '';
+      }), 1800);
+    }
+  });
+
+  /* ★ the pendulum swing: thread drops, card swings in on it ★ */
+  gsap.utils.toArray('.web-drop').forEach((drop, i) => {
+    const tl = gsap.timeline({ scrollTrigger: { trigger: drop, start: 'top 82%' }});
+    tl.fromTo(drop.querySelector('.thread'), { scaleY: 0 }, { scaleY: 1, duration: .5, ease: 'power2.out' })
+      .fromTo(drop.querySelector('.swing'),
+        { rotation: i%2 ? 16 : -16, y: -46, opacity: 0 },
+        { rotation: 0, y: 0, opacity: 1, duration: reducedMotion ? .4 : 1.7,
+          transformOrigin: '50% -78px',
+          ease: reducedMotion ? 'power2.out' : 'elastic.out(1, 0.35)' }, '-=.1');
+  });
+
+  gsap.from('.arc-card', { x: i => i ? 70 : -70, opacity: 0, duration: .8, stagger: .15,
+    ease: 'power3.out', scrollTrigger: { trigger: '.arc-grid', start: 'top 82%' }});
+  gsap.from('.pow', { scale: 0, rotation: () => gsap.utils.random(-12, 12),
+    duration: .55, stagger: .1, ease: 'back.out(2.4)',
+    scrollTrigger: { trigger: '.pow-strip', start: 'top 88%' }});
+  gsap.from('.contact-panel', { y: 60, opacity: 0, duration: .8, ease: 'power3.out',
+    scrollTrigger: { trigger: '.contact-panel', start: 'top 85%' }});
+
+  addEventListener('load', () => ScrollTrigger.refresh());
+})();
+
+/* ============================================================
+   ④ KONAMI CODE → SPIDER-SENSE
+   ↑ ↑ ↓ ↓ ← → ← → B A
+============================================================ */
+(function initKonami(){
+  const CODE = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let idx = 0;
+  addEventListener('keydown', e => {
+    const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    if (k === CODE[idx]){ if (++idx === CODE.length){ idx = 0; spideySense(); } }
+    else idx = (k === CODE[0]) ? 1 : 0;
+  });
+
+  function spideySense(){
+    if (document.body.classList.contains('sensing')) return;
+    const overlay = document.getElementById('sense-overlay');
+    const contact = document.querySelector('.contact-panel');
+    document.body.classList.add('sensing');
+    overlay.classList.add('on');
+    window.__sense = true;
+
+    /* expanding sense rings */
+    if (window.gsap && !reducedMotion) for (let i = 0; i < 3; i++){
+      const ring = document.createElement('div');
+      ring.className = 'sense-ring';
+      document.body.appendChild(ring);
+      gsap.fromTo(ring, { scale: 0, opacity: 1 },
+        { scale: 9, opacity: 0, duration: 1.1, delay: i*.18, ease: 'power2.out',
+          onComplete: () => ring.remove() });
+    }
+    gsap.to(window, { scrollTo: '#contact', duration: .9, delay: .45, ease: 'power3.inOut' });
+    setTimeout(() => contact.classList.add('sensed'), 1200);
+    setTimeout(() => {
+      document.body.classList.remove('sensing');
+      overlay.classList.remove('on');
+      window.__sense = false;
+    }, 4200);
+    setTimeout(() => contact.classList.remove('sensed'), 8000);
+  }
+})();
+/* ============================================================
+   ⑤ WEB-SHOOTER LOADER — progress web, THWIP exit, iris reveal
+============================================================ */
+(function initLoader(){
+  const loader = document.getElementById('loader');
+  if (!loader) return;
+
+  const pctEl    = loader.querySelector('.loader-pct');
+  const barEl    = loader.querySelector('.loader-bar i');
+  const statusEl = loader.querySelector('.loader-status');
+  const thwipEl  = loader.querySelector('.loader-thwip');
+  const NS = 'http://www.w3.org/2000/svg';
+  const web = loader.querySelector('#loader-web');
+
+  /* build the radial web: 8 spokes + 3 sagging rings */
+  const spokes = [], rings = [];
+  for (let k = 0; k < 8; k++){
+    const a = k * Math.PI/4;
+    const l = document.createElementNS(NS, 'line');
+    l.setAttribute('x2', (Math.cos(a)*95).toFixed(2));
+    l.setAttribute('y2', (Math.sin(a)*95).toFixed(2));
+    web.appendChild(l); l.__len = 95; spokes.push(l);
+  }
+  [34, 58, 82].forEach(r => {
+    let d = '';
+    for (let k = 0; k < 8; k++){
+      const a1 = k*Math.PI/4, a2 = (k+1)*Math.PI/4, am = a1 + Math.PI/8;
+      const x1 = Math.cos(a1)*r, y1 = Math.sin(a1)*r;
+      const cx = Math.cos(am)*r*.82, cy = Math.sin(am)*r*.82;
+      d += (k === 0 ? `M ${x1.toFixed(2)} ${y1.toFixed(2)} ` : '') +
+           `Q ${cx.toFixed(2)} ${cy.toFixed(2)} ${(Math.cos(a2)*r).toFixed(2)} ${(Math.sin(a2)*r).toFixed(2)} `;
+    }
+    const p = document.createElementNS(NS, 'path');
+    p.setAttribute('d', d); web.appendChild(p);
+    rings.push(p); p.__len = p.getTotalLength();
+  });
+
+  const MSGS = [
+    [0,  'LOADING WEB FLUID...'],
+    [25, 'CALIBRATING WEB-SHOOTERS...'],
+    [50, 'SPIDER-SENSE: WARMING UP...'],
+    [75, 'SWINGING IN ASSETS...'],
+    [93, 'THWIP! ALMOST THERE...']
+  ];
+
+  let progress = 0, finished = false, minDone = false, winLoaded = false, msgIdx = -1;
+  const t0 = Date.now();
+
+  function render(){
+    const p = Math.min(progress, 100);
+    pctEl.textContent = Math.floor(p) + '%';
+    barEl.style.width = p + '%';
+    spokes.forEach((s, i) => {
+      const k = Math.max(0, Math.min((p - i*1.8) / 52, 1));
+      s.style.strokeDasharray = s.__len;
+      s.style.strokeDashoffset = s.__len * (1 - k);
+    });
+    rings.forEach((ring, i) => {
+      const k = Math.max(0, Math.min((p - (45 + i*18)) / 20, 1));
+      ring.style.strokeDasharray = ring.__len;
+      ring.style.strokeDashoffset = ring.__len * (1 - k);
+    });
+    let m = 0; MSGS.forEach((x, i) => { if (p >= x[0]) m = i; });
+    if (m !== msgIdx){ msgIdx = m; statusEl.textContent = MSGS[m][1]; }
+  }
+
+  function maybeFinish(){
+    if (finished || !minDone || !winLoaded || progress < 89) return;
+    finished = true; clearInterval(iv);
+    progress = 100; render();
+    setTimeout(exitLoader, 220);
+  }
+
+  const iv = setInterval(() => {
+    if (progress < 90) progress += (90 - progress) * .055 + Math.random() * 1.6;
+    if (Date.now() - t0 > 7000) progress = 100;   // hard cap
+    render(); maybeFinish();
+  }, 50);
+  render();
+
+  setTimeout(() => { minDone = true; maybeFinish(); }, 2000);       // min show time
+  window.addEventListener('load', () => { winLoaded = true; maybeFinish(); });
+
+  function exitLoader(){
+    statusEl.textContent = 'SPIDER-SENSE: ONLINE ✓';
+    const done = () => {
+      loader.remove();
+      document.body.classList.remove('loading');
+      window.playHeroIntro && window.playHeroIntro();
+    };
+    if (reducedMotion || !window.gsap){
+      loader.style.transition = 'opacity .4s';
+      loader.style.opacity = 0;
+      setTimeout(done, 420);
+      return;
+    }
+    gsap.timeline({ onComplete: done })
+      .set(thwipEl, { display: 'grid' })
+      .fromTo(thwipEl, { scale: 0, rotation: -14 },
+        { scale: 1, rotation: -4, duration: .4, ease: 'back.out(2.5)' })
+      .to(loader, { clipPath: 'circle(0% at 50% 50%)', duration: .75, ease: 'power3.in', delay: .25 })
+      .to(loader, { opacity: 0, duration: .1 }, '>-.1');
+  }
+})();
+</script>
+</body>
+</html>
