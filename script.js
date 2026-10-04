@@ -12,12 +12,21 @@ if (menuToggle && siteNav) {
     );
   });
 
+  const closeMenu = () => {
+    siteNav.classList.remove("is-open");
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "Open navigation");
+  };
+
   siteNav.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      siteNav.classList.remove("is-open");
-      menuToggle.setAttribute("aria-expanded", "false");
-      menuToggle.setAttribute("aria-label", "Open navigation");
-    });
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && siteNav.classList.contains("is-open")) {
+      closeMenu();
+      menuToggle.focus();
+    }
   });
 }
 
@@ -48,12 +57,29 @@ if ("IntersectionObserver" in window) {
 
 const portraitCard = document.querySelector(".portrait-card");
 
-if (portraitCard && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  window.addEventListener("mousemove", (event) => {
-    const x = event.clientX / window.innerWidth - 0.5;
-    const y = event.clientY / window.innerHeight - 0.5;
+const canTilt =
+  window.matchMedia("(pointer: fine)").matches &&
+  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    portraitCard.style.transform =
-      `translate(-50%, -50%) rotate(3deg) perspective(900px) rotateY(${x * 4}deg) rotateX(${y * -4}deg)`;
+if (portraitCard && canTilt) {
+  let frame = null;
+
+  window.addEventListener("mousemove", (event) => {
+    if (frame) return;
+
+    frame = requestAnimationFrame(() => {
+      const x = event.clientX / window.innerWidth - 0.5;
+      const y = event.clientY / window.innerHeight - 0.5;
+
+      portraitCard.style.setProperty("--tilt-y", `${x * 4}deg`);
+      portraitCard.style.setProperty("--tilt-x", `${y * -4}deg`);
+      frame = null;
+    });
   });
+}
+
+const yearElement = document.getElementById("year");
+
+if (yearElement) {
+  yearElement.textContent = new Date().getFullYear();
 }
