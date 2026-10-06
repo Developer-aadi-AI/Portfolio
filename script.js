@@ -66,29 +66,6 @@ if ("IntersectionObserver" in window) {
   });
 }
 
-const portraitCard = document.querySelector(".portrait-card");
-
-const canTilt =
-  window.matchMedia("(pointer: fine)").matches &&
-  !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-if (portraitCard && canTilt) {
-  let frame = null;
-
-  window.addEventListener("mousemove", (event) => {
-    if (frame) return;
-
-    frame = requestAnimationFrame(() => {
-      const x = event.clientX / window.innerWidth - 0.5;
-      const y = event.clientY / window.innerHeight - 0.5;
-
-      portraitCard.style.setProperty("--tilt-y", `${x * 4}deg`);
-      portraitCard.style.setProperty("--tilt-x", `${y * -4}deg`);
-      frame = null;
-    });
-  });
-}
-
 const yearElement = document.getElementById("year");
 
 if (yearElement) {
