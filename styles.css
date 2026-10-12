@@ -677,6 +677,10 @@ svg[viewBox="0 0 24 24"] {
   overflow: hidden;
 }
 
+.stats.stats-single {
+  grid-template-columns: 1fr;
+}
+
 .stat {
   display: flex;
   flex-direction: column-reverse;
